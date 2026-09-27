@@ -8,6 +8,7 @@ const MAP_CENTER = [28.6139, 77.2090];
 const MAP_ZOOM = 11;
 
 export const FloodMap = ({ sensors = [], selectedSensor, onSelectSensor }) => {
+  const [showTelemetry, setShowTelemetry] = React.useState(false);
   const getRiskColor = (status) => {
     switch (status) {
       case 'critical':
@@ -95,7 +96,7 @@ export const FloodMap = ({ sensors = [], selectedSensor, onSelectSensor }) => {
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
                         <strong style={{ fontSize: '0.9rem', color: '#0f172a' }}>{sensor.name}</strong>
                       </div>
-                      
+
                       <div style={{
                         display: 'inline-block',
                         backgroundColor: color,
@@ -119,7 +120,11 @@ export const FloodMap = ({ sensors = [], selectedSensor, onSelectSensor }) => {
                       </div>
 
                       <button
-                        onClick={() => onSelectSensor && onSelectSensor(sensor)}
+                        onClick={(e) => {
+  e.stopPropagation();
+  onSelectSensor && onSelectSensor(sensor);
+  setShowTelemetry(true);
+}}
                         style={{
                           marginTop: '0.65rem',
                           width: '100%',
@@ -145,6 +150,138 @@ export const FloodMap = ({ sensors = [], selectedSensor, onSelectSensor }) => {
 
         <MapLegend />
       </div>
+      {showTelemetry && selectedSensor && (
+        <div
+          style={{
+            marginTop: '1rem',
+            padding: '1rem',
+            borderRadius: '10px',
+            background: 'rgba(15, 23, 42, 0.95)',
+            border: `1px solid ${getRiskColor(selectedSensor.status)}`,
+            color: '#e2e8f0',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '0.9rem',
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  fontSize: '0.72rem',
+                  color: '#38bdf8',
+                  textTransform: 'uppercase',
+                  fontWeight: 700,
+                }}
+              >
+                Live Zone Telemetry
+              </div>
+
+              <div
+                style={{
+                  fontSize: '1rem',
+                  fontWeight: 700,
+                  marginTop: '0.2rem',
+                }}
+              >
+                {selectedSensor.name}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowTelemetry(false)}
+              style={{
+                background: 'transparent',
+                border: '1px solid #475569',
+                color: '#cbd5e1',
+                borderRadius: '6px',
+                padding: '0.3rem 0.55rem',
+                cursor: 'pointer',
+              }}
+            >
+              Close
+            </button>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '0.7rem',
+            }}
+          >
+            <div className="telemetry-box">
+              <span>Water Level</span>
+              <strong>
+                {formatWaterLevel(selectedSensor.water_level_m)}
+              </strong>
+            </div>
+
+            <div className="telemetry-box">
+              <span>Danger Threshold</span>
+              <strong>
+                {formatWaterLevel(selectedSensor.danger_threshold_m)}
+              </strong>
+            </div>
+
+            <div className="telemetry-box">
+              <span>Rainfall 1h</span>
+              <strong>
+                {formatRainfall(selectedSensor.rainfall_1h_mm)}
+              </strong>
+            </div>
+
+            <div className="telemetry-box">
+              <span>Rainfall 6h</span>
+              <strong>
+                {formatRainfall(selectedSensor.rainfall_6h_mm)}
+              </strong>
+            </div>
+
+            <div className="telemetry-box">
+              <span>Drainage Usage</span>
+              <strong>
+                {selectedSensor.drainage_capacity_pct}%
+              </strong>
+            </div>
+
+            <div className="telemetry-box">
+              <span>Soil Moisture</span>
+              <strong>
+                {selectedSensor.soil_moisture_pct}%
+              </strong>
+            </div>
+
+            <div className="telemetry-box">
+              <span>Elevation</span>
+              <strong>
+                {selectedSensor.elevation_m} m
+              </strong>
+            </div>
+
+            <div className="telemetry-box">
+              <span>Risk Status</span>
+              <strong
+                style={{
+                  color: getRiskColor(selectedSensor.status),
+                  textTransform: 'uppercase',
+                }}
+              >
+                {selectedSensor.status}
+              </strong>
+            </div>
+
+            <div className="telemetry-box">
+              <span>Zone</span>
+              <strong>{selectedSensor.zone}</strong>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div style={{
         marginTop: '0.75rem',
