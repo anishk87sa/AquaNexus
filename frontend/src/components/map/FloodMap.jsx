@@ -2,12 +2,19 @@ import React from 'react';
 import { MapContainer, TileLayer, CircleMarker, Circle, Popup, Tooltip } from 'react-leaflet';
 import { MapLegend } from './MapLegend';
 import { formatWaterLevel, formatRainfall } from '../../utils/formatters';
-import { MapPin, Navigation, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Navigation, RefreshCw, AlertCircle } from 'lucide-react';
 
 const MAP_CENTER = [28.6139, 77.2090];
 const MAP_ZOOM = 11;
 
-export const FloodMap = ({ sensors = [], selectedSensor, onSelectSensor, onInspectTelemetry }) => {
+export const FloodMap = ({
+  sensors = [],
+  selectedSensor,
+  onSelectSensor,
+  onInspectTelemetry,
+  loading = false,
+  onRetry = null,
+}) => {
   const [showTelemetry, setShowTelemetry] = React.useState(false);
   const getRiskColor = (status) => {
     switch (status) {
@@ -36,6 +43,79 @@ export const FloodMap = ({ sensors = [], selectedSensor, onSelectSensor, onInspe
       </div>
 
       <div className="map-container-box">
+        {/* Loading Overlay when sensor array is empty */}
+        {loading && sensors.length === 0 && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(15, 23, 42, 0.75)',
+            backdropFilter: 'blur(3px)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            color: '#f8fafc',
+            gap: '0.75rem',
+          }}>
+            <RefreshCw size={24} color="#38bdf8" style={{ animation: 'spin 1s linear infinite' }} />
+            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Loading Catchment Telemetry Array...</span>
+          </div>
+        )}
+
+        {/* Empty State Overlay */}
+        {!loading && sensors.length === 0 && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(15, 23, 42, 0.85)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            color: '#f8fafc',
+            gap: '0.75rem',
+            padding: '1.5rem',
+            textAlign: 'center',
+          }}>
+            <AlertCircle size={28} color="#f59e0b" />
+            <div style={{ fontSize: '0.9rem', fontWeight: 700 }}>No Sensor Telemetry Stations Available</div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', maxWidth: '320px' }}>
+              Hydrological network feed is currently offline or returning empty station records.
+            </div>
+            {onRetry && (
+              <button
+                onClick={onRetry}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  padding: '0.4rem 0.9rem',
+                  backgroundColor: '#0284c7',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '0.78rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  marginTop: '0.25rem',
+                }}
+              >
+                <RefreshCw size={13} />
+                <span>Retry Connection</span>
+              </button>
+            )}
+          </div>
+        )}
+
         <MapContainer
           center={MAP_CENTER}
           zoom={MAP_ZOOM}
@@ -48,13 +128,14 @@ export const FloodMap = ({ sensors = [], selectedSensor, onSelectSensor, onInspe
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          {sensors.map((sensor) => {
+          {sensors.map((sensor, index) => {
             const isSelected = selectedSensor && selectedSensor.id === sensor.id;
             const color = getRiskColor(sensor.status);
             const riskRadiusMeters = sensor.status === 'critical' ? 2400 : sensor.status === 'warning' ? 1700 : 1000;
+            const sensorKey = sensor.id ? `station-${sensor.id}-${index}` : `station-idx-${index}`;
 
             return (
-              <React.Fragment key={sensor.id}>
+              <React.Fragment key={sensorKey}>
                 {/* Simulated Inundation Hazard Buffer Zone */}
                 <Circle
                   center={[sensor.latitude, sensor.longitude]}

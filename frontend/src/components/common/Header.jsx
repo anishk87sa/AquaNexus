@@ -1,7 +1,7 @@
 import React from 'react';
-import { Waves, Activity, RefreshCw, Cpu, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Waves, RefreshCw, Cpu, CheckCircle2, AlertCircle } from 'lucide-react';
 
-export const Header = ({ systemHealth, lastUpdated, onRefresh, loading }) => {
+export const Header = ({ systemHealth, lastUpdated, onRefresh, loading, isFallbackData = false }) => {
   const isBackendOnline = systemHealth?.status === 'healthy';
   const isModelActive = systemHealth?.model_loaded === true;
 
@@ -79,15 +79,15 @@ export const Header = ({ systemHealth, lastUpdated, onRefresh, loading }) => {
         padding: '0.4rem 0.85rem',
         borderRadius: '9999px',
       }}>
-        <span className="pulse-dot pulse-dot-green" />
+        <span className={`pulse-dot ${isFallbackData ? 'pulse-dot-amber' : 'pulse-dot-green'}`} />
         <span style={{
           fontSize: '0.75rem',
           fontWeight: 700,
-          color: '#34d399',
+          color: isFallbackData ? '#fbbf24' : '#34d399',
           letterSpacing: '0.05em',
           textTransform: 'uppercase',
         }}>
-          Live Monitoring
+          {isFallbackData ? 'Demo Fallback Telemetry' : 'Live Monitoring'}
         </span>
         <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>•</span>
         <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>

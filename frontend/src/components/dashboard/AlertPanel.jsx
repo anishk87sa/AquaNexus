@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, AlertOctagon, CheckCircle2, Bell, Radio, Siren } from 'lucide-react';
+import { Bell, Radio, Siren } from 'lucide-react';
 
 export const AlertPanel = ({ riskLevel = 'LOW', selectedSensor }) => {
   const isCritical = riskLevel === 'CRITICAL';
@@ -108,14 +108,14 @@ export const AlertPanel = ({ riskLevel = 'LOW', selectedSensor }) => {
 
       {/* Alerts Feed */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-        {alerts.map((alert) => {
+        {alerts.map((alert, idx) => {
           const badgeColor =
             alert.severity === 'CRITICAL' ? 'badge-critical' :
             alert.severity === 'HIGH' || alert.severity === 'WARNING' ? 'badge-warning' : 'badge-low';
 
           return (
             <div
-              key={alert.id}
+              key={`alert-${alert.id}-${idx}`}
               style={{
                 backgroundColor: 'rgba(15, 23, 42, 0.55)',
                 border: '1px solid #1e293b',

@@ -61,6 +61,7 @@ class MLPredictorService:
                         for i in range(len(probs))
                     },
                     "engine": "Scikit-Learn Random Forest",
+                    "model_version": "1.0.0",
                 }
             except Exception as e:
                 logger.error(f"Error during ML inference: {e}")
@@ -89,4 +90,5 @@ class MLPredictorService:
                 "Critical": 1.0 if level == 2 else 0.0,
             },
             "engine": "Heuristic Rule Fallback",
+            "model_version": "1.0.0-heuristic",
         }

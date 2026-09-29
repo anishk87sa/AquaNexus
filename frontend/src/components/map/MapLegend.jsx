@@ -21,8 +21,8 @@ export const MapLegend = () => {
       fontSize: '0.75rem',
     }}>
       <div style={{ fontWeight: 600, marginBottom: '0.35rem' }}>Flood Hazard Status</div>
-      {items.map((item) => (
-        <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+      {items.map((item, idx) => (
+        <div key={`legend-${item.label}-${idx}`} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
           <span style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: item.color }} />
           <span>{item.label}</span>
         </div>

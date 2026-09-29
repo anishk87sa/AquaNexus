@@ -114,3 +114,51 @@ pip install -r requirements.txt
 python src/train.py
 ```
 This trains the Random Forest model on historical/sample data and exports the artifact to `ml/models/flood_rf_model.joblib`.
+
+---
+
+## API Specifications & Data Contracts
+
+### Machine Learning Flood Risk Prediction
+- **Endpoint**: `POST /api/risk/predict`
+- **Headers**: `Content-Type: application/json`
+
+#### Request Payload
+```json
+{
+  "sensor_id": "sensor-01",
+  "telemetry": {
+    "rainfall_1h_mm": 22.5,
+    "rainfall_6h_mm": 55.0,
+    "river_water_level_m": 4.85,
+    "drainage_capacity_pct": 82.0,
+    "soil_moisture_pct": 88.5,
+    "elevation_m": 215.4
+  }
+}
+```
+
+#### Response Structure (HTTP 200)
+```json
+{
+  "sensor_id": "sensor-01",
+  "risk_level": 1,
+  "risk_label": "Warning",
+  "probabilities": {
+    "Normal": 0.12,
+    "Warning": 0.68,
+    "Critical": 0.20
+  },
+  "engine": "Scikit-Learn Random Forest",
+  "model_version": "1.0.0"
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `sensor_id` | `string \| null` | Identifier of the monitored catchment station |
+| `risk_level` | `integer` | Standardized risk index (`0`: Normal, `1`: Warning, `2`: Critical) |
+| `risk_label` | `string` | Categorical risk grade (`"Normal"`, `"Warning"`, `"Critical"`) |
+| `probabilities` | `object` | Float probabilities across all three risk categories |
+| `engine` | `string` | Active inference engine (`"Scikit-Learn Random Forest"` or `"Heuristic Rule Fallback"`) |
+| `model_version` | `string` | Deployed model artifact or rule version identifier |

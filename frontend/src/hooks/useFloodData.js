@@ -1,72 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { checkHealth, fetchSensors, predictFloodRisk } from '../services/api';
+import { FALLBACK_SENSORS } from '../data/fallbackSensors';
 
-const DEFAULT_SENSORS = [
-  {
-    id: "sensor-01",
-    name: "Central River Basin Gauge",
-    latitude: 28.6139,
-    longitude: 77.2090,
-    elevation_m: 215.4,
-    water_level_m: 4.12,
-    danger_threshold_m: 5.00,
-    rainfall_1h_mm: 18.5,
-    rainfall_6h_mm: 42.0,
-    drainage_capacity_pct: 74.2,
-    soil_moisture_pct: 82.0,
-    status: "warning",
-    zone: "Sector 1 - Central Catchment"
-  },
-  {
-    id: "sensor-02",
-    name: "North Metro Culvert Station",
-    latitude: 28.6500,
-    longitude: 77.2300,
-    elevation_m: 208.1,
-    water_level_m: 2.30,
-    danger_threshold_m: 4.20,
-    rainfall_1h_mm: 8.0,
-    rainfall_6h_mm: 19.5,
-    drainage_capacity_pct: 45.0,
-    soil_moisture_pct: 65.5,
-    status: "normal",
-    zone: "Sector 2 - Northern Plains"
-  },
-  {
-    id: "sensor-03",
-    name: "South Valley Lowland Outflow",
-    latitude: 28.5355,
-    longitude: 77.2500,
-    elevation_m: 192.0,
-    water_level_m: 5.40,
-    danger_threshold_m: 5.00,
-    rainfall_1h_mm: 36.0,
-    rainfall_6h_mm: 82.5,
-    drainage_capacity_pct: 94.0,
-    soil_moisture_pct: 95.0,
-    status: "critical",
-    zone: "Sector 3 - South Depression"
-  },
-  {
-    id: "sensor-04",
-    name: "Eastern Canal Spillway",
-    latitude: 28.6280,
-    longitude: 77.2800,
-    elevation_m: 204.0,
-    water_level_m: 3.10,
-    danger_threshold_m: 4.80,
-    rainfall_1h_mm: 12.0,
-    rainfall_6h_mm: 25.0,
-    drainage_capacity_pct: 58.0,
-    soil_moisture_pct: 71.0,
-    status: "normal",
-    zone: "Sector 4 - Eastern Overflow"
-  }
-];
+export const DEFAULT_SENSORS = FALLBACK_SENSORS;
 
 export const useFloodData = () => {
-  const [sensors, setSensors] = useState(DEFAULT_SENSORS);
-  const [selectedSensor, setSelectedSensor] = useState(DEFAULT_SENSORS[0]);
+  const [sensors, setSensors] = useState(FALLBACK_SENSORS);
+  const [selectedSensor, setSelectedSensor] = useState(FALLBACK_SENSORS[0]);
+  const [isFallbackData, setIsFallbackData] = useState(true);
   const [systemHealth, setSystemHealth] = useState({
     status: 'checking',
     model_loaded: false,
@@ -123,7 +64,9 @@ export const useFloodData = () => {
           Warning: isCritical ? 0.06 : 0.35,
           Normal: isCritical ? 0.02 : 0.60
         },
-        engine: 'Fallback Engine (Heuristic)'
+        engine: 'Fallback Engine (Heuristic)',
+        model_version: '1.0.0-heuristic',
+        sensor_id: sensor.id,
       });
     }
   }, []);
@@ -135,16 +78,25 @@ export const useFloodData = () => {
     try {
       const data = await fetchSensors();
       if (Array.isArray(data) && data.length > 0) {
-        setSensors(data);
-        const match = data.find(s => s.id === (selectedSensor?.id || data[0].id)) || data[0];
+        // Deduplicate sensors by ID to guarantee unique React keys
+        const uniqueSensors = Array.from(
+          new Map(data.map((item, idx) => [item.id || `sensor-${idx}`, item])).values()
+        );
+        setSensors(uniqueSensors);
+        setIsFallbackData(false);
+        const match = uniqueSensors.find(s => s.id === (selectedSensor?.id || uniqueSensors[0].id)) || uniqueSensors[0];
         setSelectedSensor(match);
         await triggerPrediction(match);
       } else {
-        await triggerPrediction(selectedSensor);
+        // Fallback to offline demo data if API returns empty array
+        setSensors(FALLBACK_SENSORS);
+        setIsFallbackData(true);
+        await triggerPrediction(selectedSensor || FALLBACK_SENSORS[0]);
       }
     } catch {
-      // Use existing sensor data if network failed
-      await triggerPrediction(selectedSensor);
+      // Use fallback sensor fixtures if network / API failed
+      setIsFallbackData(true);
+      await triggerPrediction(selectedSensor || FALLBACK_SENSORS[0]);
     } finally {
       setLastUpdated(new Date());
       setLoading(false);
@@ -199,6 +151,7 @@ export const useFloodData = () => {
     systemHealth,
     prediction,
     predictionError,
+    isFallbackData,
     riskPercentage,
     riskLevel,
     trendHistory,

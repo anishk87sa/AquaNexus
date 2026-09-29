@@ -1,0 +1,72 @@
+/**
+ * Fallback Hydrological Sensor Fixtures
+ * 
+ * Used strictly as offline/demo fallback data when the live Flask API
+ * telemetry endpoint (/api/telemetry/sensors) is unreachable or returns empty.
+ */
+export const FALLBACK_SENSORS = [
+  {
+    id: "sensor-01",
+    name: "Central River Basin Gauge",
+    latitude: 28.6139,
+    longitude: 77.2090,
+    elevation_m: 215.4,
+    water_level_m: 4.12,
+    danger_threshold_m: 5.00,
+    rainfall_1h_mm: 18.5,
+    rainfall_6h_mm: 42.0,
+    drainage_capacity_pct: 74.2,
+    soil_moisture_pct: 82.0,
+    status: "warning",
+    zone: "Sector 1 - Central Catchment",
+    isFallback: true,
+  },
+  {
+    id: "sensor-02",
+    name: "North Metro Culvert Station",
+    latitude: 28.6500,
+    longitude: 77.2300,
+    elevation_m: 208.1,
+    water_level_m: 2.30,
+    danger_threshold_m: 4.20,
+    rainfall_1h_mm: 8.0,
+    rainfall_6h_mm: 19.5,
+    drainage_capacity_pct: 45.0,
+    soil_moisture_pct: 65.5,
+    status: "normal",
+    zone: "Sector 2 - Northern Plains",
+    isFallback: true,
+  },
+  {
+    id: "sensor-03",
+    name: "South Valley Lowland Outflow",
+    latitude: 28.5355,
+    longitude: 77.2500,
+    elevation_m: 192.0,
+    water_level_m: 5.40,
+    danger_threshold_m: 5.00,
+    rainfall_1h_mm: 36.0,
+    rainfall_6h_mm: 82.5,
+    drainage_capacity_pct: 94.0,
+    soil_moisture_pct: 95.0,
+    status: "critical",
+    zone: "Sector 3 - South Depression",
+    isFallback: true,
+  },
+  {
+    id: "sensor-04",
+    name: "Eastern Canal Spillway",
+    latitude: 28.6280,
+    longitude: 77.2800,
+    elevation_m: 204.0,
+    water_level_m: 3.10,
+    danger_threshold_m: 4.80,
+    rainfall_1h_mm: 12.0,
+    rainfall_6h_mm: 25.0,
+    drainage_capacity_pct: 58.0,
+    soil_moisture_pct: 71.0,
+    status: "normal",
+    zone: "Sector 4 - Eastern Overflow",
+    isFallback: true,
+  }
+];

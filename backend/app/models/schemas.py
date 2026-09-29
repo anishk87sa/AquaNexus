@@ -19,9 +19,10 @@ class FloodPredictionRequest(BaseModel):
 class FloodPredictionResponse(BaseModel):
     risk_level: int = Field(..., ge=0, le=2, description="0: Normal, 1: Warning, 2: Critical")
     risk_label: str = Field(..., description="Normal, Warning, or Critical")
-    probabilities: Dict[str, float]
-    model_version: str
-    sensor_id: Optional[str] = None
+    probabilities: Dict[str, float] = Field(..., description="Risk class probabilities")
+    engine: str = Field(default="Scikit-Learn Random Forest", description="Inference engine name")
+    model_version: Optional[str] = Field(default="1.0.0", description="Model version identifier")
+    sensor_id: Optional[str] = Field(default=None, description="Monitored sensor ID")
 
 
 class SensorLocation(BaseModel):

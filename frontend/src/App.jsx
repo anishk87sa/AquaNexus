@@ -18,6 +18,7 @@ export function App() {
     systemHealth,
     prediction,
     predictionError,
+    isFallbackData,
     riskPercentage,
     riskLevel,
     trendHistory,
@@ -34,6 +35,7 @@ export function App() {
         lastUpdated={lastUpdated}
         onRefresh={refresh}
         loading={loading}
+        isFallbackData={isFallbackData}
       />
 
       <main className="dashboard-container">
@@ -66,6 +68,8 @@ export function App() {
             selectedSensor={selectedSensor}
             onSelectSensor={setSelectedSensor}
             onInspectTelemetry={setSelectedSensor}
+            loading={loading}
+            onRetry={refresh}
           />
 
           {/* 7. Risk Trend Chart using Recharts */}
