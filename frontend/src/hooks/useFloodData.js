@@ -73,6 +73,7 @@ export const useFloodData = () => {
     service: 'urban-flood-intelligence-backend'
   });
   const [prediction, setPrediction] = useState(null);
+  const [predictionError, setPredictionError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
@@ -107,8 +108,11 @@ export const useFloodData = () => {
       };
       const result = await predictFloodRisk(payload);
       setPrediction(result);
+      setPredictionError(null);
     } catch (e) {
       console.error('Failed to fetch prediction:', e);
+      const errMsg = e.response?.data?.error || e.message || 'Prediction failed';
+      setPredictionError(errMsg);
       // Fallback prediction calculation
       const isCritical = sensor.water_level_m >= sensor.danger_threshold_m || sensor.rainfall_1h_mm > 30;
       setPrediction({
@@ -119,7 +123,7 @@ export const useFloodData = () => {
           Warning: isCritical ? 0.06 : 0.35,
           Normal: isCritical ? 0.02 : 0.60
         },
-        engine: 'Fallback Engine'
+        engine: 'Fallback Engine (Heuristic)'
       });
     }
   }, []);
@@ -194,6 +198,7 @@ export const useFloodData = () => {
     setSelectedSensor: handleSelectSensor,
     systemHealth,
     prediction,
+    predictionError,
     riskPercentage,
     riskLevel,
     trendHistory,

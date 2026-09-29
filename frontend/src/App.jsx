@@ -17,6 +17,7 @@ export function App() {
     setSelectedSensor,
     systemHealth,
     prediction,
+    predictionError,
     riskPercentage,
     riskLevel,
     trendHistory,
@@ -43,6 +44,7 @@ export function App() {
             riskPercentage={riskPercentage}
             riskLevel={riskLevel}
             prediction={prediction}
+            predictionError={predictionError}
             selectedSensor={selectedSensor}
           />
 

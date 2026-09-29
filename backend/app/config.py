@@ -21,8 +21,10 @@ class Config:
     ]
 
     # File paths
-    ML_MODEL_PATH = Path(os.getenv("ML_MODEL_PATH", BASE_DIR.parent / "ml" / "models" / "flood_rf_model.joblib"))
-    SAMPLE_SENSORS_PATH = Path(os.getenv("DATA_SAMPLE_PATH", BASE_DIR.parent / "data" / "sample" / "sensors_sample.json"))
+    # Resolve paths relative to the project root (urban-flood-intelligence)
+    PROJECT_ROOT = BASE_DIR.parent
+    ML_MODEL_PATH = Path(os.getenv("ML_MODEL_PATH", PROJECT_ROOT / "ml" / "models" / "flood_rf_model.joblib")).resolve()
+    SAMPLE_SENSORS_PATH = Path(os.getenv("DATA_SAMPLE_PATH", PROJECT_ROOT / "data" / "sample" / "sensors_sample.json")).resolve()
 
 
 class DevelopmentConfig(Config):

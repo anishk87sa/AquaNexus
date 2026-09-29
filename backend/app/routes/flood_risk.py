@@ -19,11 +19,13 @@ def predict_flood_risk():
     except ValidationError as err:
         return jsonify({"error": "Validation error", "details": err.errors()}), 422
 
-    features = req.telemetry.model_dump()
-    prediction = current_app.predictor.predict(features)
-    prediction["sensor_id"] = req.sensor_id
-
-    return jsonify(prediction), 200
+    try:
+        features = req.telemetry.model_dump()
+        prediction = current_app.predictor.predict(features)
+        prediction["sensor_id"] = req.sensor_id
+        return jsonify(prediction), 200
+    except Exception as err:
+        return jsonify({"error": "Prediction service error", "details": str(err)}), 500
 
 
 @flood_risk_bp.route("/thresholds", methods=["GET"])

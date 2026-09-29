@@ -16,7 +16,7 @@ def create_app(config_name: str = "development") -> Flask:
     app.config.from_object(config_by_name.get(config_name, config_by_name["development"]))
 
     # Setup CORS for frontend communication
-    CORS(app, resources={r"/api/*": {"origins": app.config.get("CORS_ORIGINS", "*")}})
+    CORS(app, resources={r"/api/*": {"origins": app.config["CORS_ORIGINS"]}})
 
     # Initialize ML Predictor Service
     app.predictor = MLPredictorService(model_path=app.config.get("ML_MODEL_PATH"))

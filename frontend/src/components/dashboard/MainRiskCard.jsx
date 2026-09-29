@@ -1,7 +1,7 @@
 import React from 'react';
 import { ShieldAlert, AlertTriangle, ShieldCheck, Zap } from 'lucide-react';
 
-export const MainRiskCard = ({ riskPercentage = 0, riskLevel = 'LOW', prediction, selectedSensor }) => {
+export const MainRiskCard = ({ riskPercentage = 0, riskLevel = 'LOW', prediction, predictionError = null, selectedSensor }) => {
   const getTheme = () => {
     switch (riskLevel) {
       case 'CRITICAL':
@@ -123,6 +123,23 @@ export const MainRiskCard = ({ riskPercentage = 0, riskLevel = 'LOW', prediction
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
             {theme.desc}
           </div>
+          {predictionError && (
+            <div style={{
+              marginTop: '0.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              color: '#f87171',
+              fontSize: '0.72rem',
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              borderRadius: '4px',
+              padding: '0.25rem 0.5rem',
+            }}>
+              <AlertTriangle size={12} color="#f87171" />
+              <span>Prediction API Error ({predictionError}) — Falling back to heuristic engine</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -138,8 +155,10 @@ export const MainRiskCard = ({ riskPercentage = 0, riskLevel = 'LOW', prediction
         color: 'var(--text-muted)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-          <Zap size={12} color="#38bdf8" />
-          <span>{prediction?.engine || 'Scikit-Learn Random Forest'}</span>
+          <Zap size={12} color={predictionError ? "#f59e0b" : "#38bdf8"} />
+          <span style={{ color: predictionError ? "#fbbf24" : "inherit" }}>
+            {prediction?.engine || 'Scikit-Learn Random Forest'}
+          </span>
         </div>
         <span style={{ fontFamily: 'var(--font-mono)' }}>
           {selectedSensor?.name?.slice(0, 22) || 'Station 01'}

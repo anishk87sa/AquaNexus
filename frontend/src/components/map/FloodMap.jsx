@@ -79,7 +79,13 @@ export const FloodMap = ({ sensors = [], selectedSensor, onSelectSensor, onInspe
                     weight: isSelected ? 3 : 1.5,
                   }}
                   eventHandlers={{
-                    click: () => onSelectSensor && onSelectSensor(sensor),
+                    click: () => {
+                      if (onInspectTelemetry) {
+                        onInspectTelemetry(sensor);
+                      } else if (onSelectSensor) {
+                        onSelectSensor(sensor);
+                      }
+                    },
                   }}
                 >
                   <Tooltip direction="top" offset={[0, -10]} opacity={0.95}>
@@ -157,6 +163,7 @@ export const FloodMap = ({ sensors = [], selectedSensor, onSelectSensor, onInspe
       </div>
       {showTelemetry && selectedSensor && (
         <div
+          key={selectedSensor.id}
           style={{
             marginTop: '1rem',
             padding: '1rem',
