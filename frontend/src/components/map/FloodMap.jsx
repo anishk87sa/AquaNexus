@@ -7,7 +7,7 @@ import { MapPin, Navigation, AlertTriangle, ShieldCheck } from 'lucide-react';
 const MAP_CENTER = [28.6139, 77.2090];
 const MAP_ZOOM = 11;
 
-export const FloodMap = ({ sensors = [], selectedSensor, onSelectSensor }) => {
+export const FloodMap = ({ sensors = [], selectedSensor, onSelectSensor, onInspectTelemetry }) => {
   const [showTelemetry, setShowTelemetry] = React.useState(false);
   const getRiskColor = (status) => {
     switch (status) {
@@ -122,8 +122,13 @@ export const FloodMap = ({ sensors = [], selectedSensor, onSelectSensor }) => {
                       <button
                         onClick={(e) => {
   e.stopPropagation();
-  onSelectSensor && onSelectSensor(sensor);
-  setShowTelemetry(true);
+  if (onInspectTelemetry) {
+    onInspectTelemetry(sensor);
+    setShowTelemetry(true);
+  } else {
+    onSelectSensor && onSelectSensor(sensor);
+    setShowTelemetry(true);
+  }
 }}
                         style={{
                           marginTop: '0.65rem',

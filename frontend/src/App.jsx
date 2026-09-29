@@ -63,6 +63,7 @@ export function App() {
             sensors={sensors}
             selectedSensor={selectedSensor}
             onSelectSensor={setSelectedSensor}
+            onInspectTelemetry={setSelectedSensor}
           />
 
           {/* 7. Risk Trend Chart using Recharts */}
