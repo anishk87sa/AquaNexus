@@ -121,15 +121,15 @@ export const FloodMap = ({ sensors = [], selectedSensor, onSelectSensor, onInspe
 
                       <button
                         onClick={(e) => {
-  e.stopPropagation();
-  if (onInspectTelemetry) {
-    onInspectTelemetry(sensor);
-    setShowTelemetry(true);
-  } else {
-    onSelectSensor && onSelectSensor(sensor);
-    setShowTelemetry(true);
-  }
-}}
+                          e.stopPropagation();
+                          if (onInspectTelemetry) {
+                            onInspectTelemetry(sensor);
+                            setShowTelemetry(true);
+                          } else {
+                            onSelectSensor && onSelectSensor(sensor);
+                            setShowTelemetry(true);
+                          }
+                        }}
                         style={{
                           marginTop: '0.65rem',
                           width: '100%',
@@ -282,7 +282,17 @@ export const FloodMap = ({ sensors = [], selectedSensor, onSelectSensor, onInspe
 
             <div className="telemetry-box">
               <span>Zone</span>
-              <strong>{selectedSensor.zone}</strong>
+              <strong>
+                {selectedSensor.zone ||
+                  selectedSensor.zone_name ||
+                  ({
+                    'sensor-01': 'Sector 1 - Central Catchment',
+                    'sensor-02': 'Sector 2 - Northern Plains',
+                    'sensor-03': 'Sector 3 - South Depression',
+                    'sensor-04': 'Sector 4 - Eastern Overflow',
+                  }[selectedSensor.id]) ||
+                  'Zone data unavailable'}
+              </strong>
             </div>
           </div>
         </div>
