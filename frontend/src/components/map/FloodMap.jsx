@@ -92,7 +92,7 @@ export const FloodMap = ({
               Hydrological network feed is currently offline or returning empty station records.
             </div>
             {onRetry && (
-              <button
+              <button aria-label="Retry telemetry fetch"
                 onClick={onRetry}
                 style={{
                   display: 'flex',

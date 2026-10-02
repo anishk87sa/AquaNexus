@@ -1,10 +1,10 @@
-import React from 'react';
+import { RISK_COLORS } from '../../utils/constants';
 
 export const MapLegend = () => {
   const items = [
-    { label: 'Normal / Safe', color: '#10b981' },
-    { label: 'Warning / Elevated', color: '#f59e0b' },
-    { label: 'Critical / Flooding', color: '#ef4444' },
+    { label: 'Normal / Safe', color: RISK_COLORS.normal },
+    { label: 'Warning / Elevated', color: RISK_COLORS.warning },
+    { label: 'Critical / Flooding', color: RISK_COLORS.critical },
   ];
 
   return (

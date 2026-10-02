@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useToast } from './useToast';
+
 import { checkHealth, fetchSensors, predictFloodRisk } from '../services/api';
 import { FALLBACK_SENSORS } from '../data/fallbackSensors';
 
 export const DEFAULT_SENSORS = FALLBACK_SENSORS;
 
-export const useFloodData = () => {
+  const { showToast } = useToast();
   const [sensors, setSensors] = useState(FALLBACK_SENSORS);
   const [selectedSensor, setSelectedSensor] = useState(FALLBACK_SENSORS[0]);
   const [isFallbackData, setIsFallbackData] = useState(true);
@@ -50,10 +51,12 @@ export const useFloodData = () => {
       const result = await predictFloodRisk(payload);
       setPrediction(result);
       setPredictionError(null);
+      showToast('Prediction updated', 'success');
     } catch (e) {
       console.error('Failed to fetch prediction:', e);
       const errMsg = e.response?.data?.error || e.message || 'Prediction failed';
       setPredictionError(errMsg);
+      showToast(errMsg, 'error');
       // Fallback prediction calculation
       const isCritical = sensor.water_level_m >= sensor.danger_threshold_m || sensor.rainfall_1h_mm > 30;
       setPrediction({
@@ -157,6 +160,6 @@ export const useFloodData = () => {
     trendHistory,
     loading,
     lastUpdated,
-    refresh: syncTelemetry,
+    Toast,
   };
 };

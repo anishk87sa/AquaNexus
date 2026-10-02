@@ -24,8 +24,9 @@ export function App() {
     trendHistory,
     loading,
     lastUpdated,
+    Toast,
     refresh,
-  } = useFloodData();
+
 
   return (
     <div className="dashboard-layout">
@@ -90,8 +91,7 @@ export function App() {
             selectedSensor={selectedSensor}
           />
         </section>
-      </main>
-    </div>
+        {Toast && <Toast />}
   );
 }
 

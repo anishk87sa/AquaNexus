@@ -267,3 +267,14 @@ body {
   font-size: 0.85rem;
   color: #f8fafc;
 }
+
+/* Button accessibility styles */
+button:focus-visible {
+  outline: 2px solid var(--border-highlight);
+  outline-offset: 2px;
+}
+
+button:hover {
+  background-color: var(--color-accent);
+  color: #fff;
+}
