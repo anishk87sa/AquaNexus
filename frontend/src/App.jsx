@@ -26,7 +26,7 @@ export function App() {
     lastUpdated,
     Toast,
     refresh,
-
+  } = useFloodData();
 
   return (
     <div className="dashboard-layout">
@@ -40,7 +40,7 @@ export function App() {
       />
 
       <main className="dashboard-container">
-        {/* Top 4 KPI Metrics: Main Risk, Weather, Water Level, Infrastructure */}
+        {/* Top 4 KPI Metrics */}
         <section className="metrics-grid">
           {/* 2. Main Risk Card */}
           <MainRiskCard
@@ -73,7 +73,7 @@ export function App() {
             onRetry={refresh}
           />
 
-          {/* 7. Risk Trend Chart using Recharts */}
+          {/* 7. Risk Trend Chart */}
           <RiskTrendChart trendData={trendHistory} />
         </section>
 
@@ -91,7 +91,10 @@ export function App() {
             selectedSensor={selectedSensor}
           />
         </section>
+
         {Toast && <Toast />}
+      </main>
+    </div>
   );
 }
 

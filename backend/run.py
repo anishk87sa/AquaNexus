@@ -1,7 +1,9 @@
 import os
+os.environ["FLASK_ENV"] = "development"
+
 from app import create_app
 
-env = os.getenv("FLASK_ENV", "development")
+env = "development"
 app = create_app(env)
 
 if __name__ == "__main__":
